@@ -1,6 +1,6 @@
 Bước 1: npm install để install packages\
         bật service mysql chạy trên localhost (có thể dùng xampp để bật server)\
-Bước 2: Tạo folder config chứa file config.json có nội dung như sau
+Bước 2: Trong folder db, tạo folder config chứa file config.json có nội dung như sau
 ```
 {
   "development": {
