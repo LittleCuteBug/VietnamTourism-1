@@ -1,7 +1,6 @@
 Bước 1: npm install để install packages\
         bật service mysql chạy trên localhost (có thể dùng xampp để bật server)\
-Bước 2: set các giá trị thích hợp để kết nối tới db trong file db/config/config.json\
-file config.json có nội dung như sau
+Bước 2: Tạo folder config chứa file config.json có nội dung như sau
 ```
 {
   "development": {
@@ -15,6 +14,7 @@ file config.json có nội dung như sau
 }
 
 ```
+Sau đó set các giá trị thích hợp để kết nối tới db 
 Bước 3: bật terminal trong folder db, chạy lệnh npx sequelize-cli db:create để tạo db \
 Bước 4: Chạy npx sequelize-cli db:migrate để tự động tạo table trên db \
 Bước 5: npm run start để chaỵ server backend \
