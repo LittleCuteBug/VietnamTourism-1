@@ -117,10 +117,24 @@ const getTours = async(req, res) => {
     }
 }
 
+const getAll = async (req, res) => {
+    try {
+        const userList = await User.findAll();
+        res.status(200).send(userList);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        });
+    }
+}
+
 const user = {
     login: login,
     register: register,
     getInfo: getInfo,
-    getTours: getTours
+    getTours: getTours,
+    getAll: getAll
 }
 module.exports = user;

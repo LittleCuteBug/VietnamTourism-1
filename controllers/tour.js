@@ -2,8 +2,24 @@ const db = require('../db/models');
 const Tour = db.Tour;
 const Location = db.Location;
 const TourReview = db.TourReview;
+const sequelize = db.sequelize;
 
-
+const updateTourPrice = async () => {
+    try {
+        let TourList = await Tour.findAll();
+        for (const tour of TourList) {
+            let locationOfTour = await tour.getLocations();
+            let price = 0;
+            for (const location of locationOfTour) {
+                price += location.price;
+            }
+            tour.price = price;
+            await tour.save();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 const createTour = async (req, res) => {
     const newTour = {
         UserId: req.body.userId,
@@ -151,6 +167,32 @@ const updateData = async (req, res) => {
     }
 }
 
+const findTours = async (req, res) => {
+
+    try {
+        await updateTourPrice();
+        let have_name_in_query = '';
+        if (req.query.name) {
+            have_name_in_query = ` MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) AND `
+        }
+        let [tourList, metadata] = await sequelize.query(
+            `
+                SELECT *
+                FROM Tours
+                WHERE
+                    ${have_name_in_query}
+                    price <= ${req.query.price ? req.query.price : '99999999999999'}
+            `
+        )  
+        res.status(200).send(tourList);
+    } catch (error) {
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        }); 
+    }
+}
+
 
 
 
@@ -162,6 +204,7 @@ const tour = {
     deleteTour: deleteTour,
     addReview: addReview,
     deleteReview: deleteReview,
-    updateData: updateData
+    updateData: updateData,
+    findTours: findTours
 }
 module.exports = tour;

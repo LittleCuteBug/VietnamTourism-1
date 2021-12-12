@@ -7,6 +7,7 @@ const addFullTextIndex = async () => {
         await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(description);");
         await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(name);");
         await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(address);");
+        await sequelize.query("ALTER TABLE Tours ADD FULLTEXT(name);");
         console.log("========================");
         console.log("ADD FULL TEXT INDEX SUCCESS");
         console.log("========================");

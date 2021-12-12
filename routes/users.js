@@ -15,6 +15,10 @@ router.get(
     '/info',
     controller.user.getInfo
 );
+router.get(
+    '/list',
+    controller.user.getAll
+)
 router.post(
     '/login',
     controller.user.login

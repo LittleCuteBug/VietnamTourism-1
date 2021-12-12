@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers');
 
-router.get('/', (req, res) => {
-    res.send('This is tours pages');
-})
+
+router.get(
+    '/', 
+    controller.tour.findTours
+);
 
 router.post(
     '/create',

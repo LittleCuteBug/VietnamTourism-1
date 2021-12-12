@@ -52,7 +52,7 @@ const findLocations = async (req, res) => {
                         MATCH (address) AGAINST('${req.query.address}' IN NATURAL LANGUAGE MODE)
                     )
                     AND
-                    price < ${req.query.price ? req.query.price : '99999999999999'}
+                    price <= ${req.query.price ? req.query.price : '99999999999999'}
             `
         )
         for (const obj of locationList) {
