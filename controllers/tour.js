@@ -167,8 +167,7 @@ const updateData = async (req, res) => {
     }
 }
 
-const findTours = async (req, res) => {
-
+const findTours = async (req, res) => {    
     try {
         await updateTourPrice();
         let have_name_in_query = '';
@@ -183,8 +182,18 @@ const findTours = async (req, res) => {
                     ${have_name_in_query}
                     price <= ${req.query.price ? req.query.price : '99999999999999'}
             `
-        )  
-        res.status(200).send(tourList);
+        )
+        let response = [];
+        for (const tour of tourList) {
+            let tourInstace = await Tour.findOne({where: {id: tour.id}});
+            let locationOfTour = await tourInstace.getLocations();
+            response.push({
+                tour: tour,
+                location: locationOfTour
+            })
+        }
+        
+        res.status(200).send(response);
     } catch (error) {
         res.status(500).send({
             code: 1,
