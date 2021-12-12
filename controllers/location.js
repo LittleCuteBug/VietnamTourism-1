@@ -1,4 +1,7 @@
 const db = require('../db/models');
+const {Op} = require('sequelize');
+const Sequelize = db.Sequelize;
+const sequelize = db.sequelize;
 const fs = require("fs");
 const { v4: uuidv4 } = require('uuid');
 
@@ -10,6 +13,8 @@ const addLocation = async (req, res) => {
     const newLocation = {
         name: req.body.name,
         address: req.body.address,
+        description: req.body.description,
+        price: req.body.price,
         image: url,
         priceMinPerPerson: req.body.priceMinPerPerson,
         priceMaxPerPerson: req.body.priceMaxPerPerson,
@@ -35,9 +40,21 @@ const addLocation = async (req, res) => {
     }
 }
 
-const getAllLocations = async (req, res) => {
+const findLocations = async (req, res) => {
     try {
-        let locationList = await Location.findAll();
+        let [locationList, metadata] = await sequelize.query(
+            `
+                SELECT *
+                FROM Locations
+                WHERE
+                    (
+                        MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) OR
+                        MATCH (address) AGAINST('${req.query.address}' IN NATURAL LANGUAGE MODE)
+                    )
+                    AND
+                    price < ${req.query.price ? req.query.price : '99999999999999'}
+            `
+        )
         for (const obj of locationList) {
             const imageURL = obj.get('image')
             const imageData = await fs.promises.readFile(imageURL,'base64')
@@ -103,26 +120,14 @@ const deleteLocationWithId = async (req, res) => {
     }
 }
 
-const filterLocation = () => {
-    try {
-        console.log(req.body);
-        
-    } catch (error) {
-        res.status(500).send({
-            code:1,
-            message: error.message
-        })
-    }
 
-}
 
 
 
 const location = {
     addLocation: addLocation,
-    getAllLocations: getAllLocations,
+    findLocations: findLocations,
     getLocationWithId: getLocationWithId,
-    deleteLocationWithId: deleteLocationWithId,
-    filterLocation: filterLocation
+    deleteLocationWithId: deleteLocationWithId
 }
 module.exports = location;
