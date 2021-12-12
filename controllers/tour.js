@@ -1,3 +1,4 @@
+const { response } = require('express');
 const db = require('../db/models');
 const Tour = db.Tour;
 const Location = db.Location;
@@ -107,7 +108,7 @@ const addReview = async (req, res) => {
             create_date: Date.now()
         }
         let TourReviewInstace = await TourReview.create(newTourReview);
-        thisTour.setTourReviews(TourReviewInstace);
+        thisTour.addTourReview(TourReviewInstace);
         res.status(200).send({
             code: 0,
             message: "Add new tour review success"
@@ -202,6 +203,59 @@ const findTours = async (req, res) => {
     }
 }
 
+const getComments = async (req, res) => {
+    try {
+        let thisTour = await Tour.findOne({
+            where: {
+                id: req.query.id
+            }
+        });
+        if (!thisTour)
+            throw "Tour not found";
+        let reviewList = await thisTour.getTourReviews();
+        let response = [];
+        for (const review of reviewList) {
+            response.push(review.comment);
+        }
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        }); 
+    }
+
+}
+
+const getRating = async (req, res) => {
+    try {
+        let thisTour = await Tour.findOne({
+            where: {
+                id: req.query.id
+            }
+        });
+        if (!thisTour)
+            throw "Tour not found";
+        let reviewList = await thisTour.getTourReviews();
+        let rate = 0;
+        let count = 0;
+        for (const review of reviewList) {
+            if (review.star > 0) {
+                ++ count;
+                rate += review.star;
+            }
+        }
+        rate /= count;
+        res.status(200).send({rating: rate});
+    } catch (error) {
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        }); 
+    }
+
+}
+
 
 
 
@@ -214,6 +268,8 @@ const tour = {
     addReview: addReview,
     deleteReview: deleteReview,
     updateData: updateData,
-    findTours: findTours
+    findTours: findTours,
+    getComments: getComments,
+    getRating: getRating
 }
 module.exports = tour;

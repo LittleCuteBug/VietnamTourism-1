@@ -8,6 +8,16 @@ router.get(
     controller.tour.findTours
 );
 
+router.get(
+    '/comment',
+    controller.tour.getComments
+)
+
+router.get(
+    '/rating',
+    controller.tour.getRating
+)
+
 router.post(
     '/create',
     controller.tour.createTour
