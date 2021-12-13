@@ -53,6 +53,8 @@ const findLocations = async (req, res) => {
                     )
                     AND
                     price <= ${req.query.price ? req.query.price : '99999999999999'}
+                    AND
+                    rating >= ${req.query.rating ? req.query.rating : '0'}
             `
         )
         for (const obj of locationList) {
