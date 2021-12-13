@@ -1,6 +1,7 @@
 const db = require('./models');
 const sequelize = db.sequelize;
-
+const bcrypt = require('bcryptjs');
+const User = db.User;
 
 const addFullTextIndex = async () => {
     try {
@@ -15,9 +16,30 @@ const addFullTextIndex = async () => {
         console.log(error);
     }
 }
+const createAdminAccount = async () => {
+    const admin = {
+        username: 'admin',
+        password: bcrypt.hashSync('admin', 8),
+        firstname: 'admin',
+        lastname: 'admin',
+        phonenumber: '0999999999',
+        role: 'admin'
+    }
+    try {
+        await User.create(admin);
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+const init_db = async () => {
+    await db.sequelize.sync({force: true});
+    await addFullTextIndex();
+    await createAdminAccount();
+}
 
 module.exports = {
-    addFullTextIndex: addFullTextIndex
+    init_db: init_db
 }
 
 
