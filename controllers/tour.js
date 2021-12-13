@@ -5,15 +5,26 @@ const Location = db.Location;
 const TourReview = db.TourReview;
 const sequelize = db.sequelize;
 
-const updateTourPrice = async () => {
+const updateTourPriceAndRating = async () => {
     try {
         let TourList = await Tour.findAll();
         for (const tour of TourList) {
             let locationOfTour = await tour.getLocations();
+            let reviewOfTour = await tour.getTourReviews();
             let price = 0;
+            let rating = 0;
+            let count = 0;
             for (const location of locationOfTour) {
                 price += location.price;
             }
+            for (const review of reviewOfTour) {
+                if (review.star) {
+                    rating += review.star;
+                    ++ count;
+                }
+            }
+
+            tour.star = rating / count;
             tour.price = price;
             await tour.save();
         }
@@ -170,7 +181,7 @@ const updateData = async (req, res) => {
 
 const findTours = async (req, res) => {    
     try {
-        await updateTourPrice();
+        await updateTourPriceAndRating();
         let have_name_in_query = '';
         if (req.query.name) {
             have_name_in_query = ` MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) AND `
@@ -182,6 +193,8 @@ const findTours = async (req, res) => {
                 WHERE
                     ${have_name_in_query}
                     price <= ${req.query.price ? req.query.price : '99999999999999'}
+                    AND
+                    star >= ${req.query.rating ? req.query.rating : '0'}
             `
         )
         let response = [];

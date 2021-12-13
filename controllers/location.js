@@ -55,9 +55,8 @@ const findLocations = async (req, res) => {
             `
         )
         for (const obj of locationList) {
-            const imageURL = obj.get('image')
-            const imageData = await lib.readImageFromURL(imageURL);
-            obj.set('image', imageData)
+            const imageURL = obj.image
+            obj.image = await lib.readImageFromURL(imageURL);
         }
         res.status(200).send(locationList);
     } catch (error) {
