@@ -41,16 +41,22 @@ const addLocation = async (req, res) => {
 
 const findLocations = async (req, res) => {
     try {
+        let query = "";
+        if (req.query.name || req.query.address) {
+            query = `
+            (
+                MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) OR
+                MATCH (address) AGAINST('${req.query.address}' IN NATURAL LANGUAGE MODE)
+            )
+            AND
+            `
+        }
         let [locationList, metadata] = await sequelize.query(
             `
                 SELECT *
                 FROM Locations
                 WHERE
-                    (
-                        MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) OR
-                        MATCH (address) AGAINST('${req.query.address}' IN NATURAL LANGUAGE MODE)
-                    )
-                    AND
+                    ${query}
                     price <= ${req.query.price ? req.query.price : '99999999999999'}
             `
         )
