@@ -25,7 +25,9 @@ const addLocation = async (req, res) => {
         if(!fs.existsSync('images')) {
             fs.mkdirSync('images');
         }
-        await fs.promises.writeFile(url, imgBase64Data, 'base64');
+        if(url) {
+            await fs.promises.writeFile(url, imgBase64Data, 'base64');
+        }
         await Location.create(newLocation);
         res.status(200).send({
             code: 0,
@@ -81,9 +83,8 @@ const getLocationWithId = async (req, res) => {
             }
         });
         for (const obj of location) {
-            const imageURL = obj.get('image')
-            const imageData = await lib.readImageFromURL(imageURL);
-            obj.set('image', imageData)
+            const imageURL = obj.image
+            obj.image = await lib.readImageFromURL(imageURL);
         }
         res.status(200).send(location);
     } catch (error) {
@@ -104,7 +105,8 @@ const deleteLocationWithId = async (req, res) => {
 
         for (const obj of location) {
             const imageURL = obj.get('image')
-            await fs.promises.unlink(imageURL)
+            if(imageURL)
+                await fs.promises.unlink(imageURL)
         }
 
         await Location.destroy({

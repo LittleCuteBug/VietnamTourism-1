@@ -17,7 +17,7 @@ app.use(cors(corsOptions));
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '10mb'}));
 
 app.use('/', router);
 const PORT = process.env.PORT || 8080;
