@@ -53,14 +53,11 @@ const findLocations = async (req, res) => {
                     )
                     AND
                     price <= ${req.query.price ? req.query.price : '99999999999999'}
-                    AND
-                    rating >= ${req.query.rating ? req.query.rating : '0'}
             `
         )
         for (const obj of locationList) {
-            const imageURL = obj.get('image')
-            const imageData = await fs.promises.readFile(imageURL,'base64')
-            obj.set('image', imageData)
+            const imageURL = obj.image;
+            obj.image = await fs.promises.readFile(imageURL,'base64')
         }
         res.status(200).send(locationList);
     } catch (error) {
