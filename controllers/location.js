@@ -1,15 +1,14 @@
 const db = require('../db/models');
+const lib = require('../lib');
 const {Op} = require('sequelize');
 const Sequelize = db.Sequelize;
 const sequelize = db.sequelize;
 const fs = require("fs");
-const { v4: uuidv4 } = require('uuid');
 
 const Location = db.Location;
 
 const addLocation = async (req, res) => {
-    const imgBase64Data = req.body.image.replace(/^data:image\/png;base64,/, "")
-    const url = 'images\/' + uuidv4() + '.png'
+    const {imgBase64Data, url} = lib.getImageData(req.body.image)
     const newLocation = {
         name: req.body.name,
         address: req.body.address,
@@ -57,7 +56,7 @@ const findLocations = async (req, res) => {
         )
         for (const obj of locationList) {
             const imageURL = obj.get('image')
-            const imageData = await fs.promises.readFile(imageURL,'base64')
+            const imageData = await lib.readImageFromURL(imageURL);
             obj.set('image', imageData)
         }
         res.status(200).send(locationList);
@@ -78,7 +77,7 @@ const getLocationWithId = async (req, res) => {
         });
         for (const obj of location) {
             const imageURL = obj.get('image')
-            const imageData = await fs.promises.readFile(imageURL,'base64')
+            const imageData = await lib.readImageFromURL(imageURL);
             obj.set('image', imageData)
         }
         res.status(200).send(location);
