@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers');
+const { authJwt } = require('../middlewares');
 
 router.get(
     '/', 
@@ -18,6 +19,7 @@ router.post(
 
 router.delete(
     '/delete/:id',
+    authJwt.isAdmin,
     controller.location.deleteLocationWithId
 )
 

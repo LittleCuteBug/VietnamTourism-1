@@ -1,6 +1,7 @@
 const { response } = require('express');
 const db = require('../db/models');
 const Tour = db.Tour;
+const User = db.User;
 const Location = db.Location;
 const TourReview = db.TourReview;
 const sequelize = db.sequelize;
@@ -228,7 +229,11 @@ const getComments = async (req, res) => {
         let reviewList = await thisTour.getTourReviews();
         let response = [];
         for (const review of reviewList) {
-            response.push(review.comment);
+            response.push({
+                userid: review.userId,
+                user: await User.findOne({where: {id: review.userId}}),
+                comment: review.comment
+            });
         }
         res.status(200).send(response);
     } catch (error) {

@@ -13,10 +13,12 @@ router.get(
 )
 router.get(
     '/info',
+    authJwt.verifyToken,
     controller.user.getInfo
 );
 router.get(
     '/list',
+    authJwt.isAdmin,
     controller.user.getAll
 )
 router.post(
@@ -30,6 +32,7 @@ router.post(
 );
 router.get(
     '/tours',
+    authJwt.verifyToken,
     controller.user.getTours
 )
 
