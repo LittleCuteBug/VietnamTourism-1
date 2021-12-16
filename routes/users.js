@@ -30,10 +30,20 @@ router.post(
     verifyRegister.checkDuplicateUsername,
     controller.user.register
 );
+router.post(
+    '/update',
+    authJwt.verifyToken,
+    controller.user.updateUser
+)
 router.get(
     '/tours',
     authJwt.verifyToken,
     controller.user.getTours
+)
+router.delete(
+    '/delete/:id',
+    authJwt.isAdmin,
+    controller.user.deleteUser
 )
 
 module.exports = router;

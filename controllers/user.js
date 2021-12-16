@@ -132,11 +132,53 @@ const getAll = async (req, res) => {
     }
 }
 
+const deleteUser = async (req, res) => {
+    try {
+        await User.destroy({
+            where: {
+                id: req.params.id
+            }
+        });
+        res.status(200).send("Delete user success!");
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        });
+    }
+}
+const updateUser = async (req, res) => {
+    try {
+        let token = req.headers['x-access-token'];
+        let tokenData = await getDataFromToken(token);
+        let user = await User.findOne({
+            where: {
+                id: tokenData.id
+            }
+        });
+        user.firstname = req.body.firstname ? req.body.firstname : user.firstname;
+        user.lastname = req.body.lastname ? req.body.lastname : user.lastname;
+        user.phonenumber = req.body.phonenumber ? req.body.phonenumber : user.phonenumber;
+        if (req.body.password)
+            user.password = bcrypt.hashSync(req.body.password, 8);
+        await user.save();
+        res.status(200).send("Update user success!");
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        });
+    }
+}
 const user = {
+    updateUser: updateUser,
     login: login,
     register: register,
     getInfo: getInfo,
     getTours: getTours,
-    getAll: getAll
+    getAll: getAll,
+    deleteUser: deleteUser
 }
 module.exports = user;

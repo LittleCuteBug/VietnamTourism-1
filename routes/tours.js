@@ -19,6 +19,11 @@ router.get(
     controller.tour.getRating
 )
 
+router.get(
+    '/:id',
+    controller.tour.getTourById
+)
+
 router.post(
     '/create',
     authJwt.verifyToken,

@@ -54,6 +54,7 @@ const isAdmin = (req, res, next) => {
         next();
     })
 }
+
 const getDataFromToken = (accessToken) => {
     try {
         let decoded = jwt.verify(accessToken, process.env.SECRET_KEY);

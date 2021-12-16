@@ -217,6 +217,28 @@ const findTours = async (req, res) => {
     }
 }
 
+const getTourById = async (req, res) => {    
+    try {
+        let tour = await Tour.findOne({
+            where: {
+                id: req.params.id 
+            }
+        })
+        let response = [];
+        let locationOfTour = await tour.getLocations();
+        response.push({
+            tour: tour,
+            location: locationOfTour
+        })
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        }); 
+    }
+}
+
 const getComments = async (req, res) => {
     try {
         let thisTour = await Tour.findOne({
@@ -230,6 +252,7 @@ const getComments = async (req, res) => {
         let response = [];
         for (const review of reviewList) {
             response.push({
+                reviewid: review.id,
                 userid: review.userId,
                 user: await User.findOne({where: {id: review.userId}}),
                 comment: review.comment
@@ -288,6 +311,7 @@ const tour = {
     updateData: updateData,
     findTours: findTours,
     getComments: getComments,
-    getRating: getRating
+    getRating: getRating,
+    getTourById: getTourById
 }
 module.exports = tour;

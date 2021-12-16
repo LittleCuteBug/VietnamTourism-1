@@ -17,6 +17,12 @@ router.post(
     controller.location.addLocation
 );
 
+router.post(
+    '/update',
+    controller.location.updateLocation
+);
+
+
 router.delete(
     '/delete/:id',
     authJwt.isAdmin,
