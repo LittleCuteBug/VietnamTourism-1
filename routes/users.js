@@ -47,6 +47,7 @@ router.delete(
 )
 router.get(
     '/tour_comment/:id',
+    authJwt.verifyToken,
     controller.user.getCommentInTour
 )
 
