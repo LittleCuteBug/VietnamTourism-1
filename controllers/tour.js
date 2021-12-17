@@ -5,6 +5,7 @@ const User = db.User;
 const Location = db.Location;
 const TourReview = db.TourReview;
 const sequelize = db.sequelize;
+const readImageFromURL = require('../lib/readImageFromURL');
 
 const updateTourPriceAndRating = async () => {
     try {
@@ -202,9 +203,18 @@ const findTours = async (req, res) => {
         for (const tour of tourList) {
             let tourInstace = await Tour.findOne({where: {id: tour.id}});
             let locationOfTour = await tourInstace.getLocations();
+            let locationList = [];
+            for (let location of locationOfTour) {
+                let image = await readImageFromURL(location.image);
+                locationList.push({
+                    location: location,
+                    image: image
+                })
+                console.log(locationList);
+            }
             response.push({
                 tour: tour,
-                location: locationOfTour
+                location: locationList
             })
         }
         
@@ -224,11 +234,20 @@ const getTourById = async (req, res) => {
                 id: req.params.id 
             }
         })
+        let tourInstace = await Tour.findOne({where: {id: tour.id}});
+        let locationOfTour = await tourInstace.getLocations();
+        let locationList = [];
         let response = [];
-        let locationOfTour = await tour.getLocations();
+        for (let location of locationOfTour) {
+            let image = await readImageFromURL(location.image);
+            locationList.push({
+                location: location,
+                image: image
+            })
+        }
         response.push({
             tour: tour,
-            location: locationOfTour
+            location: locationList
         })
         res.status(200).send(response);
     } catch (error) {

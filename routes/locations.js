@@ -19,6 +19,7 @@ router.post(
 
 router.post(
     '/update',
+    authJwt.isAdmin,
     controller.location.updateLocation
 );
 
