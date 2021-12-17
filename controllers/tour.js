@@ -6,6 +6,7 @@ const Location = db.Location;
 const TourReview = db.TourReview;
 const sequelize = db.sequelize;
 const readImageFromURL = require('../lib/readImageFromURL');
+const {authJwt} = require('../middlewares');
 
 const updateTourPriceAndRating = async () => {
     try {
@@ -35,8 +36,10 @@ const updateTourPriceAndRating = async () => {
     }
 }
 const createTour = async (req, res) => {
+    let token = req.headers["x-access-token"];
+    let tokenData = authJwt.getDataFromToken(token);
     const newTour = {
-        UserId: req.body.userId,
+        UserId: tokenData.id,
         name: req.body.name,
         description: req.body.description
     }
@@ -171,7 +174,8 @@ const updateData = async (req, res) => {
             name: req.body.name ? req.body.name : thisTour.name,
             description: req.body.description ? req.body.description : thisTour.description
         })
-        await thisTour.setLocations(locationList);
+        if (req.body.locations)
+            await thisTour.setLocations(locationList);
         res.status(200).send("Update tour success!");
     } catch (error) {
         res.status(500).send({
