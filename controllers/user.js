@@ -1,5 +1,6 @@
 const db = require('../db/models');
 const User = db.User;
+const TourReview = db.TourReview;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const {getDataFromToken} = require('../middlewares/auth');
@@ -172,6 +173,28 @@ const updateUser = async (req, res) => {
         });
     }
 }
+
+const getCommentInTour = async(req, res) => {
+    try {
+        let token = req.headers["x-access-token"];
+        let tokenData = getDataFromToken(token);
+        let tour_id = req.params.id;
+        console.log(tour_id);
+        let response = await TourReview.findAll({
+            where: {
+                userId: tokenData.id,
+                TourId: tour_id
+            }
+        })
+        res.status(200).send(response);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        });
+    }
+}
 const user = {
     updateUser: updateUser,
     login: login,
@@ -179,6 +202,7 @@ const user = {
     getInfo: getInfo,
     getTours: getTours,
     getAll: getAll,
-    deleteUser: deleteUser
+    deleteUser: deleteUser,
+    getCommentInTour: getCommentInTour
 }
 module.exports = user;

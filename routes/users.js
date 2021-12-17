@@ -45,5 +45,9 @@ router.delete(
     authJwt.isAdmin,
     controller.user.deleteUser
 )
+router.get(
+    '/tour_comment/:id',
+    controller.user.getCommentInTour
+)
 
 module.exports = router;
