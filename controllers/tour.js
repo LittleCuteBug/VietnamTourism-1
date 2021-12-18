@@ -193,7 +193,9 @@ const findTours = async (req, res) => {
                 FROM Tours
                 WHERE
                     ${have_name_in_query}
-                    price <= ${req.query.price ? req.query.price : '99999999999999'}
+                    price <= ${req.query.priceMax ? req.query.priceMax : '99999999999999'}
+                    AND
+                    price >= ${req.query.priceMax ? req.query.priceMax : '99999999999999'}
                     AND
                     star >= ${req.query.rating ? req.query.rating : '0'}
             `
