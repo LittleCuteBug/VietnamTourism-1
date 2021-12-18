@@ -161,7 +161,8 @@ const updateUser = async (req, res) => {
         user.firstname = req.body.firstname ? req.body.firstname : user.firstname;
         user.lastname = req.body.lastname ? req.body.lastname : user.lastname;
         user.phonenumber = req.body.phonenumber ? req.body.phonenumber : user.phonenumber;
-        if (req.body.password)
+        const newPassword = req.body.password;
+        if (newPassword.length)
             user.password = bcrypt.hashSync(req.body.password, 8);
         await user.save();
         res.status(200).send("Update user success!");

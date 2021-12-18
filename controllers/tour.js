@@ -8,27 +8,20 @@ const sequelize = db.sequelize;
 const readImageFromURL = require('../lib/readImageFromURL');
 const {authJwt} = require('../middlewares');
 
-const updateTourPriceAndRating = async () => {
+const updateTourRating = async () => {
     try {
         let TourList = await Tour.findAll();
         for (const tour of TourList) {
-            let locationOfTour = await tour.getLocations();
             let reviewOfTour = await tour.getTourReviews();
-            let price = 0;
             let rating = 0;
             let count = 0;
-            for (const location of locationOfTour) {
-                price += location.price;
-            }
             for (const review of reviewOfTour) {
                 if (review.star) {
                     rating += review.star;
                     ++ count;
                 }
             }
-
             tour.star = rating / count;
-            tour.price = price;
             await tour.save();
         }
     } catch (error) {
@@ -41,7 +34,8 @@ const createTour = async (req, res) => {
     const newTour = {
         UserId: tokenData.id,
         name: req.body.name,
-        description: req.body.description
+        description: req.body.description,
+        price: req.body.price
     }
     try {
         let thisTour = await Tour.create(newTour);
@@ -172,7 +166,8 @@ const updateData = async (req, res) => {
         })
         await thisTour.update({
             name: req.body.name ? req.body.name : thisTour.name,
-            description: req.body.description ? req.body.description : thisTour.description
+            description: req.body.description ? req.body.description : thisTour.description,
+            price: req.body.price ? req.body.price : thisTour.price
         })
         if (req.body.locations)
             await thisTour.setLocations(locationList);
@@ -187,7 +182,7 @@ const updateData = async (req, res) => {
 
 const findTours = async (req, res) => {    
     try {
-        await updateTourPriceAndRating();
+        await updateTourRating();
         let have_name_in_query = '';
         if (req.query.name) {
             have_name_in_query = ` MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) AND `
