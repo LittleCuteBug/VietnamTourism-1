@@ -161,10 +161,31 @@ const updateUser = async (req, res) => {
         user.firstname = req.body.firstname ? req.body.firstname : user.firstname;
         user.lastname = req.body.lastname ? req.body.lastname : user.lastname;
         user.phonenumber = req.body.phonenumber ? req.body.phonenumber : user.phonenumber;
-        const newPassword = req.body.password ? req.body.password : '';
-        if (newPassword.length)
-            user.password = bcrypt.hashSync(req.body.password, 8);
         await user.save();
+        res.status(200).send("Update user success!");
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            code: 1,
+            message: error.message
+        });
+    }
+}
+
+const changePass = async (req, res) => {
+    try {
+        let token = req.headers['x-access-token'];
+        let tokenData = await getDataFromToken(token);
+        let user = await User.findOne({
+            where: {
+                id: tokenData.id
+            }
+        });
+        const newPassword = req.body.password ? req.body.password : '';
+        if (newPassword.length != 0) {
+            user.password = bcrypt.hashSync(req.body.password, 8);
+            await user.save();
+        }
         res.status(200).send("Update user success!");
     } catch (error) {
         console.log(error);
@@ -197,6 +218,7 @@ const getCommentInTour = async(req, res) => {
     }
 }
 const user = {
+    changePass: changePass,
     updateUser: updateUser,
     login: login,
     register: register,

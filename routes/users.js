@@ -35,6 +35,11 @@ router.post(
     authJwt.verifyToken,
     controller.user.updateUser
 )
+router.post(
+    '/changePass',
+    authJwt.verifyToken,
+    controller.user.changePass
+)
 router.get(
     '/tours',
     authJwt.verifyToken,

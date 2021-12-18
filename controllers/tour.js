@@ -195,7 +195,7 @@ const findTours = async (req, res) => {
                     ${have_name_in_query}
                     price <= ${req.query.priceMax ? req.query.priceMax : '99999999999999'}
                     AND
-                    price >= ${req.query.priceMax ? req.query.priceMax : '99999999999999'}
+                    price >= ${req.query.priceMin ? req.query.priceMin : '0'}
                     AND
                     star >= ${req.query.rating ? req.query.rating : '0'}
             `
