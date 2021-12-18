@@ -186,7 +186,7 @@ const changePass = async (req, res) => {
             user.password = bcrypt.hashSync(req.body.password, 8);
             await user.save();
         }
-        res.status(200).send("Update user success!");
+        res.status(200).send("Update password success!");
     } catch (error) {
         console.log(error);
         res.status(500).send({

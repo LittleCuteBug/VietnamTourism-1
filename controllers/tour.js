@@ -187,6 +187,44 @@ const findTours = async (req, res) => {
         if (req.query.name) {
             have_name_in_query = ` MATCH (name) AGAINST('${req.query.name}' IN NATURAL LANGUAGE MODE) AND `
         }
+        let locationNameQuerry = '';
+        if (req.query.locationName) {
+            console.log(req.query.locationName);
+            let [locationList, metadata] = await sequelize.query(
+                `
+                    SELECT *
+                    FROM Locations
+                    WHERE
+                        MATCH (name) AGAINST('${req.query.locationName}' IN NATURAL LANGUAGE MODE)
+                `
+            );
+            const locationIdList = [];
+            locationList.forEach((location) => {
+                locationIdList.push(location.id);
+            })
+            let querr = '1';
+            if (locationIdList.length) {
+                querr = `
+                LocationId IN (${locationIdList.join(',')})
+                `
+            }
+            let [TourIdList, metadata2] = await sequelize.query(
+                `
+                    SELECT TourId
+                    FROM TourLocation
+                    WHERE
+                        ${querr}
+                `
+            );
+            TourIdList = TourIdList.map((tour) => tour.TourId);
+            console.log(TourIdList);
+            locationNameQuerry = `
+                AND 
+                    id IN (${TourIdList.join(',')})
+            `
+            
+                
+        }
         let [tourList, metadata] = await sequelize.query(
             `
                 SELECT *
@@ -198,6 +236,7 @@ const findTours = async (req, res) => {
                     price >= ${req.query.priceMin ? req.query.priceMin : '0'}
                     AND
                     star >= ${req.query.rating ? req.query.rating : '0'}
+                    ${locationNameQuerry}
             `
         )
         let response = [];
@@ -211,7 +250,6 @@ const findTours = async (req, res) => {
                     location: location,
                     image: image
                 })
-                console.log(locationList);
             }
             response.push({
                 tour: tour,
@@ -221,6 +259,7 @@ const findTours = async (req, res) => {
         
         res.status(200).send(response);
     } catch (error) {
+        console.log(error);
         res.status(500).send({
             code: 1,
             message: error.message
