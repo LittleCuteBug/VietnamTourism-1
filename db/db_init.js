@@ -5,10 +5,11 @@ const User = db.User;
 
 const addFullTextIndex = async () => {
     try {
-        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(description);");
-        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(name);");
-        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(address);");
-        await sequelize.query("ALTER TABLE Tours ADD FULLTEXT(name);");
+        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(description) WITH PARSER ngram;");
+        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(description) WITH PARSER ngram;");
+        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(name) WITH PARSER ngram;");
+        await sequelize.query("ALTER TABLE Locations ADD FULLTEXT(address) WITH PARSER ngram;");
+        await sequelize.query("ALTER TABLE Tours ADD FULLTEXT(name) WITH PARSER ngram;");
         console.log("========================");
         console.log("ADD FULL TEXT INDEX SUCCESS");
         console.log("========================");
