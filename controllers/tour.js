@@ -315,7 +315,8 @@ const getComments = async (req, res) => {
                 userid: review.userId,
                 user: await User.findOne({where: {id: review.userId}}),
                 comment: review.comment,
-                rating: review.star 
+                rating: review.star,
+                create_date: review.create_date 
             });
         }
         res.status(200).send(response);
