@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Location.init({
     name: DataTypes.STRING,
     address: DataTypes.STRING,
-    description: DataTypes.STRING,
+    description: DataTypes.STRING(10000),
     image: DataTypes.STRING,
     price: DataTypes.INTEGER,
     timeOpen: DataTypes.STRING,

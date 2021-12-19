@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   TourReview.init({
     userId: DataTypes.INTEGER,
     star: DataTypes.INTEGER,
-    comment: DataTypes.STRING,
+    comment: DataTypes.STRING(10000),
     image: DataTypes.STRING,
     create_date: DataTypes.DATE
   }, {

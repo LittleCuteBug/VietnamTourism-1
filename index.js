@@ -23,6 +23,6 @@ app.use('/', router);
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, async () => {
-  //await db_init.init_db();
+  await db_init.init_db();
   console.log(`Server is running on port ${PORT}.`);
 });

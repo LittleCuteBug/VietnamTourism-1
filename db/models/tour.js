@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Tour.init({
     name: DataTypes.STRING,
-    description: DataTypes.STRING,
+    description: DataTypes.STRING(10000),
     price: DataTypes.INTEGER,
     star: DataTypes.INTEGER,
   }, {
